@@ -21,6 +21,8 @@ public class EventImporter {
         List<String> lines = Files.readAllLines(Path.of(filename));
 
         int count = 0;
+        int imported = 0;
+        int rejected = 0;
 
         for (String line : lines) {
             count++;
@@ -29,6 +31,7 @@ public class EventImporter {
 
             if (values.length != 3) {
                 System.out.println("Error on line " + count + ": length must be 3 arguments");
+                rejected++;
                 continue;
             }
 
@@ -40,6 +43,7 @@ public class EventImporter {
 
                 if (title.isEmpty()) {
                     System.out.println("Error on line " + count + ": title is blank");
+                    rejected++;
                     continue;
                 }
 
@@ -48,17 +52,23 @@ public class EventImporter {
 
                 if (!Arrays.asList(colors).contains(color)) {
                     System.out.println("Error on line " + count + ": invalid color");
+                    rejected++;
                     continue;
                 }
 
                 events.add(
                         new Event(date, title, color)
                 );
+
+                imported++;
             } catch (DateTimeParseException dtpe) {
                 System.out.println("Error on line " + count + ": invalid date");
+                rejected++;
                 continue;
             }
         }
+
+        System.out.println("Imported: " + imported + "; Rejected: " + rejected);
 
         return events;
     }
