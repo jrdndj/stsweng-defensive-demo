@@ -6,6 +6,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+
+// Aya-ay, Bicomong
 public class EventImporter {
 
     private static final DateTimeFormatter FORMAT =
@@ -27,6 +29,24 @@ public class EventImporter {
 
             String title = values[1].trim();
             String color = values[2].trim();
+            
+
+                try {
+                        
+                } catch (Exception e) {
+                        // TODO: handle exception
+                }
+                if (title.isEmpty()) {
+                        title = "No Title";
+                        System.out.println("Event with no title found at line " + lines.indexOf(line) + 1 + ".");
+                }
+                
+                if (color.isEmpty() || (!color.equals("red") && !color.equals("green") && !color.equals("blue"))) {
+                        color = "No Color";
+                        System.out.println("Event with invalid color found at line " + lines.indexOf(line) + 1 + ".");
+                }
+
+            
 
             events.add(
                     new Event(date, title, color)
