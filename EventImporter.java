@@ -20,13 +20,14 @@ public class EventImporter {
 
         int errorCount = 0;
         int validCount = 0;
+        LocalDate date;
 
         for (String line : lines) {
 
             String[] values = line.split(",");
         
             try {
-                LocalDate date = LocalDate.parse(values[0].trim(), FORMAT);
+                date = LocalDate.parse(values[0].trim(), FORMAT);
             } catch (Exception e) {
                 System.out.println("Invalid date: " + values[0].trim());
                 errorCount++;
