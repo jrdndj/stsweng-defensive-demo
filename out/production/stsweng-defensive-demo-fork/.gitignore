@@ -1,0 +1,6 @@
+*.xml
+*.iml
+*.md
+*.class
+events.csv
+out/production/stsweng-defensive-demo-fork/events.csv
