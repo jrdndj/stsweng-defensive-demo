@@ -2,7 +2,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,19 +20,44 @@ public class EventImporter {
 
         List<String> lines = Files.readAllLines(Path.of(filename));
 
+        int count = 0;
+
         for (String line : lines) {
+            count++;
 
             String[] values = line.split(",");
 
-            LocalDate date =
-                    LocalDate.parse(values[0].trim(), FORMAT);
+            if (values.length != 3) {
+                System.out.println("Error on line " + count + ": length must be 3 arguments");
+                continue;
+            }
 
-            String title = values[1].trim();
-            String color = values[2].trim();
+            try {
+                LocalDate date =
+                        LocalDate.parse(values[0].trim(), FORMAT);
 
-            events.add(
-                    new Event(date, title, color)
-            );
+                String title = values[1].trim();
+
+                if (title.isEmpty()) {
+                    System.out.println("Error on line " + count + ": title is blank");
+                    continue;
+                }
+
+                String color = values[2].trim();
+                String[] colors = {"red", "green", "blue"};
+
+                if (!Arrays.asList(colors).contains(color)) {
+                    System.out.println("Error on line " + count + ": invalid color");
+                    continue;
+                }
+
+                events.add(
+                        new Event(date, title, color)
+                );
+            } catch (DateTimeParseException dtpe) {
+                System.out.println("Error on line " + count + ": invalid date");
+                continue;
+            }
         }
 
         return events;
