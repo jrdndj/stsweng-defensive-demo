@@ -8,31 +8,61 @@ import java.util.List;
 
 public class EventImporter {
 
-    private static final DateTimeFormatter FORMAT =
-            DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
-    public static List<Event> importEvents(String filename)
-            throws IOException {
+        public static List<Event> importEvents(String filename)
+                        throws IOException {
 
-        List<Event> events = new ArrayList<>();
+                List<Event> events = new ArrayList<>();
 
-        List<String> lines = Files.readAllLines(Path.of(filename));
+                List<String> lines = Files.readAllLines(Path.of(filename));
 
-        for (String line : lines) {
+                for (String line : lines) {
 
-            String[] values = line.split(",");
+                        String[] values = line.split(",");
 
-            LocalDate date =
-                    LocalDate.parse(values[0].trim(), FORMAT);
+                        if (values.length != 3) {
+                                System.err.println("Invalid line: " + line);
+                                continue;
+                        }
 
-            String title = values[1].trim();
-            String color = values[2].trim();
+                        // if date is in wrong date format
+                        try {
+                                LocalDate.parse(values[0].trim(), FORMAT);
+                        } catch (Exception e) {
+                                System.err.println("Invalid date: " + line);
+                                continue;
+                        }
 
-            events.add(
-                    new Event(date, title, color)
-            );
+                        LocalDate date = LocalDate.parse(values[0].trim(), FORMAT);
+
+                        String title = values[1].trim();
+
+                        if (title.isEmpty()) {
+                                System.err.println("Invalid title: blank titles not allowed: " + line);
+                                continue;
+                        }
+
+                        String color = values[2].trim();
+
+                        if (!color.equals("red") && !color.equals("green") && !color.equals("blue")) {
+                                System.err.println("Invalid color: only red, green, or blue are allowed: " + line);
+                                continue;
+                        }
+
+                        events.add(
+                                        new Event(date, title, color));
+                }
+
+                // print out number of inavlid lines and number of valid lines
+                int invalidLines = lines.size() - events.size();
+                int validLines = events.size();
+
+                System.out.println();
+                System.out.println("Number of invalid lines: " + invalidLines);
+                System.out.println("Number of valid lines: " + validLines);
+                System.out.println();
+
+                return events;
         }
-
-        return events;
-    }
 }
